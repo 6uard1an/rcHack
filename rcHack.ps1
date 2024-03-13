@@ -1,11 +1,14 @@
 #your bot token goes here
-$token = "MTIxMTQ2MTc0MTk4OTMzMTAwNA.GbUHkW.L1rVp304GmVRMz8lb_0BGLHNOcocjruTl0AFWI"
+#EXAMPLE: $token = "MTA0ODE4MjEwMTA1MTQ2MDM3.AJif8F.9Uod-6ND1QAO38pwPJ7Ishvu5Eb"
+$token = "YOUR_DISCORD_BOT_TOKEN_HERE"
 
 #your server id goes here
-$guildId = "1199979426570584064"
+#example: $guildId = "1199929856564584245"
+$guildId = "YOUR_DISCORD_SERVER_ID"
 
 #put the url to your rcHack script (for persistance)
 #you can host the file on github (make sure the repository is public)
+#example: $StartupPsOnlineFileLocation = "HTTPS://WWW.EXAMPLE.COM/URL_TO_YOUR_RCHACK_SCRIPT.PS1"
 $StartupPsOnlineFileLocation = "HTTPS://WWW.EXAMPLE.COM/URL_TO_YOUR_RCHACK_SCRIPT.PS1"
 
 
