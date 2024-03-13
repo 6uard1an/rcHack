@@ -72,7 +72,7 @@ the `StartupPsOnlineFileLocation` url should lead to an online-hosted version of
 
 ---
 
-
+# `Depending on your version of windows and if you have an av installed, you may need to disable your antivirus and windows defender.`
 
 ```plaintext
 COMMAND_NAME                           |                           PARAMETERS
