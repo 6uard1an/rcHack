@@ -8,14 +8,14 @@ $TamperProtectionEnabled = (Get-MpPreference).TamperProtection
 if ($TamperProtectionEnabled -eq 1 -or [string]::IsNullOrEmpty($TamperProtectionEnabled)) {
         $shell = New-Object -ComObject WScript.Shell
 $shell.SendKeys("^{ESC}")
-Start-Sleep -Seconds 1
-$shell.SendKeys("Tamper Protection")
-Start-Sleep -Seconds 1
-$shell.SendKeys("{ENTER}")
 Start-Sleep -Seconds 2
+$shell.SendKeys("Tamper Protection")
+Start-Sleep -Seconds 2
+$shell.SendKeys("{ENTER}")
+Start-Sleep -Seconds 4
 1..4 | ForEach-Object {
     $shell.SendKeys("{TAB}")
-    Start-Sleep -Milliseconds 100
+    Start-Sleep -Milliseconds 200
 }
 $shell.SendKeys(" ")
 Start-Sleep -Seconds 1
