@@ -13,6 +13,7 @@ $StartupPsOnlineFileLocation = "HTTPS://WWW.EXAMPLE.COM/URL_TO_YOUR_RCHACK_SCRIP
 
 
 
+
 $channel_id = $null
 $last_message_id = $null
 $dir = "$Env:USERPROFILE\Desktop"
