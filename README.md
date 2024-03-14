@@ -231,3 +231,5 @@ E          X          A          M          P          L          E          S
 49. !help              // Displays information about available commands
     Example: !help
 ```
+
+special thanks to [@noom825](https://github.com/moom825/Discord-RAT-2.0/commits?author=moom825) for the dll's!
