@@ -225,7 +225,7 @@ E          X          A          M          P          L          E          S
         on line 9, set the var StartupPsOnlineFileLocation to the full url of your ps1 file
     Example: !startup
 
-48. !implode           // Triggers a system implosion (Use with caution!)
+48. !implode           // Triggers a system implosion (Leaves no trace)
     Example: !implode
 
 49. !help              // Displays information about available commands
